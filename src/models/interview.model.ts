@@ -24,7 +24,9 @@ class InterviewModel {
                 ...where,
                 archived_at: null,
             },
-            orderBy,
+            orderBy: {
+                updated_at: "desc",
+            },
             include: {
                 author: {
                     select: {
@@ -51,9 +53,15 @@ class InterviewModel {
                 },
                 comment: {
                     take: 3,
+                    orderBy: {
+                        updated_at: "desc",
+                    },
                 },
                 interview_change_log: {
-                    take: 3,
+                    // take: 3,
+                    orderBy: {
+                        updated_at: "desc",
+                    },
                 },
             },
         });

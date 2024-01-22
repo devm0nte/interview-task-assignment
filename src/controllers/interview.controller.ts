@@ -65,6 +65,7 @@ class InterviewController {
         try {
             const userId = getUserIdUtil(req.user);
             const interviewObject = req.body;
+            interviewObject.author_id = userId;
             const created = await InterviewModel.create(interviewObject);
             if (!created) {
                 throw new HttpException(400, "Create Interview failed");
@@ -115,6 +116,9 @@ class InterviewController {
                     id: interviewId,
                 },
                 data: {
+                    subject: req.body.subject,
+                    description: req.body.description,
+                    status: req.body.status,
                     updated_at: new Date(),
                 },
             });
