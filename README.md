@@ -4,6 +4,12 @@
 
 APIs Document of Interview Task API Service
 
+- Using `express-rate-limit` for limit requests per IP [default: max 15 req/IP]
+
+- How to use : Clone the repo and run `docker-compose up --build -d` [required docker]
+
+- ADDITIONAL : SwaggerUI will run automatically in `/api/doc`
+
 ## Servers
 
 -   **Version 1:** [http://localhost:3000/v1/](http://localhost:3000/v1/)

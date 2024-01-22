@@ -1,10 +1,10 @@
 import setRateLimit from "express-rate-limit";
-
+const maxLimit = 15;
 // Rate limit middleware
 const rateLimitMiddleware = setRateLimit({
     windowMs: 60 * 1000,
-    max: 30,
-    message: "You have exceeded your 5 requests per minute limit.",
+    max: maxLimit,
+    message: `You have exceeded your ${maxLimit} requests per minute limit.`,
     headers: true,
 });
 
