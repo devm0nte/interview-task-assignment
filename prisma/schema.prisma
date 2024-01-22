@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  User
+  Admin
+}
+
+enum Status {
+  Todo
+  InProgress @map("in Progress")
+  Done
+}
+
+model User {
+  id                   Int                    @id @default(autoincrement())
+  name                 String
+  email                String                 @unique
+  password             String
+  role                 Role?                  @default(User)
+  is_active            Boolean?               @default(true)
+  created_at           DateTime?              @default(now())
+  updated_at           DateTime?              @updatedAt
+  deleted_at           DateTime?
+  interview            Interview[]
+  interview_change_log Interview_change_log[]
+  comment              Comment[]
+
+  @@map("users")
+}
+
+model Interview {
+  id                   Int                    @id @default(autoincrement())
+  subject              String
+  description          String
+  status               Status?                @default(Todo)
+  author               User                   @relation(fields: [author_id], references: [id])
+  author_id            Int
+  created_at           DateTime?              @default(now())
+  updated_at           DateTime?              @updatedAt
+  archived_at          DateTime?
+  interview_change_log Interview_change_log[]
+  comment              Comment[]
+
+  @@map("interviews")
+}
+
+model Interview_change_log {
+  id           Int       @id @default(autoincrement())
+  interview_id Int
+  subject      String
+  description  String
+  status       Status?   @default(Todo)
+  editor_id    Int
+  updated_at   DateTime? @updatedAt
+  archived_at  DateTime?
+  editor       User      @relation(fields: [editor_id], references: [id])
+  interview    Interview @relation(fields: [interview_id], references: [id])
+
+  @@map("interview_change_logs")
+}
+
+model Comment {
+  id           Int       @id @default(autoincrement())
+  interview_id Int
+  author_id    Int
+  message      String
+  created_at   DateTime? @default(now())
+  updated_at   DateTime? @updatedAt
+  deleted_at   DateTime?
+  author       User      @relation(fields: [author_id], references: [id])
+  interview    Interview @relation(fields: [interview_id], references: [id])
+
+  @@map("comments")
+}

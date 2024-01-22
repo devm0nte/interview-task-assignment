@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Data Display</title>
+    <style>
+        .data-box {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 20px;
+            max-width: 400px;
+            cursor: pointer;
+        }
+
+        .details {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="data-container"></div>
+<div id="data-detail"></div>
+<button id="load-more-btn">Load More</button>
+
+<script>
+    let currentPage = 0;
+
+    document.addEventListener('DOMContentLoaded', fetchData);
+
+    document.getElementById('load-more-btn').addEventListener('click', loadMoreData);
+
+    function fetchData() {
+        fetch(`http://localhost:3000/v1/api/interviews?skip=${3*currentPage}`)
+            .then(response => response.json())
+            .then(data => displayData(data.data))
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
+    function displayData(data) {
+        const dataContainer = document.getElementById('data-container');
+
+        data.forEach(item => {
+            const dataBox = document.createElement('div');
+            dataBox.classList.add('data-box');
+            dataBox.addEventListener('click', () => showDetails(item.id));
+
+            const topicId = document.createElement('p');
+            topicId.textContent = `ID: ${item.id}`;
+
+            const subject = document.createElement('p');
+            subject.textContent = `Subject: ${item.subject}`;
+
+            const description = document.createElement('p');
+            description.textContent = `Description: ${item.description}`;
+
+            const status = document.createElement('p');
+            status.textContent = `Status: ${item.status}`;
+
+            const authorName = document.createElement('p');
+            authorName.textContent = `Author: ${item.author.name}`;
+
+            const createdAt = document.createElement('p');
+            createdAt.textContent = `Created At: ${item.created_at}`;
+
+            const updatedAt = document.createElement('p');
+            updatedAt.textContent = `Updated At: ${item.updated_at}`;
+
+            dataBox.appendChild(topicId);
+            dataBox.appendChild(subject);
+            dataBox.appendChild(description);
+            dataBox.appendChild(status);
+            dataBox.appendChild(authorName);
+            dataBox.appendChild(createdAt);
+            dataBox.appendChild(updatedAt);
+
+            dataContainer.appendChild(dataBox);
+        });
+    }
+    function showDetails(id) {
+        const detailsContainer = document.createElement('div');
+        detailsContainer.classList.add('details');
+
+        // Clear existing details
+        const existingDetailsContainer = document.querySelector('.details');
+        if (existingDetailsContainer) {
+            existingDetailsContainer.remove();
+        }
+
+        fetch(`http://localhost:3000/v1/api/interviews/${id}`)
+            .then(response => response.json())
+            .then(details => {
+                const detailsText = document.createElement('p');
+                detailsText.textContent = `Details: ${JSON.stringify(details)}`;
+                detailsContainer.appendChild(detailsText);
+            })
+            .catch(error => console.error('Error fetching details:', error));
+
+        document.getElementById('data-detail').appendChild(detailsContainer);
+    }
+
+    function loadMoreData() {
+        currentPage++;
+        fetchData();
+    }
+</script>
+
+</body>
+</html>

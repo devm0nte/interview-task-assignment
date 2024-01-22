@@ -1,0 +1,39 @@
+version: "3.8"
+services:
+    dev-db:
+        image: postgres:13
+        ports:
+            - 5454:5432
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: testtesttest
+            POSTGRES_DB: "interview_task"
+        networks:
+            - mylocal
+        volumes:
+            - postgres:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+    dev-service:
+        container_name: "interview-task-service"
+        restart: always
+        build: .
+        depends_on:
+            dev-db:
+                condition: service_healthy
+        ports:
+            - "3000:3000"
+        environment:
+            - TZ=Asia/Bangkok
+            - DATABASE_URL=postgres://postgres:testtesttest@dev-db:5432/interview_task?schema=public  # Adjust the URL based on your application's database configuration
+            - SECRET_KEY="THISISMYASSIGNMENTSECRETKEY"
+        networks:
+            - mylocal
+volumes:
+  postgres:
+networks:
+    mylocal:
