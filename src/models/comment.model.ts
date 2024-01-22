@@ -24,7 +24,9 @@ class CommentModel {
                 ...where,
                 deleted_at: null,
             },
-            orderBy,
+            orderBy: {
+                created_at: "desc",
+            },
         });
     };
 

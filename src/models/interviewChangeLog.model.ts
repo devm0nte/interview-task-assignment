@@ -21,7 +21,9 @@ class InterviewChangeLogModel {
             take,
             cursor,
             where,
-            orderBy,
+            orderBy: {
+                updated_at: "desc",
+            },
         });
     };
 
